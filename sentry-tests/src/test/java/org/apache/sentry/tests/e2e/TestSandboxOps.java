@@ -60,7 +60,7 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
   private PolicyFile addTwoUsersWithAllDb() {
     policyFile
     .addGroupsToUser("user1", "user_group")
-    .addGroupsToUser("user2", "user_group")
+    .addGroupsToUser(Users.user2.name(), "user_group")
     .addPermissionsToRole("db1_all", "server=server1->db=db1")
     .addPermissionsToRole("db2_all", "server=server1->db=db2")
     .addRolesToGroup("user_group", "db1_all", "db2_all");
@@ -78,7 +78,7 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
       dropDb(ADMIN1, dbName);
       createDb(ADMIN1, dbName);
     }
-    for (String user : new String[] { "user1", "user2" }) {
+    for (String user : new String[] { "user1", Users.user2.name() }) {
       for (String dbName : new String[] { "db1", "db2" }) {
         Connection userConn = context.createConnection(user, "foo");
         String tabName = user + "_tab1";
@@ -141,7 +141,7 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
     policyFile
     .addPermissionsToRole("db1_tab2_all", "server=server1->db=db1->table=table_2")
     .addRolesToGroup("group1", "db1_tab2_all")
-    .addGroupsToUser("user3", "group1");
+    .addGroupsToUser(Users.user3.name(), "group1");
     policyFile.write(context.getPolicyFile());
     Connection adminCon = context.createConnection(ADMIN1, "password");
     Statement adminStmt = context.createStatement(adminCon);
@@ -154,7 +154,7 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
     adminStmt.execute("create table table_2 (id int)");
     adminStmt.close();
     adminCon.close();
-    Connection userConn = context.createConnection("user3", "password");
+    Connection userConn = context.createConnection(Users.user3.name(), "password");
     Statement userStmt = context.createStatement(userConn);
     userStmt.execute("use " + dbName);
     // user3 doesn't have select privilege on table_1, so insert/select should fail
@@ -193,13 +193,13 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
         "admin_role = server=server1",
         "[users]",
         "user1 = user_group1",
-        "user2 = user_group2",
-        "admin = admin_group"
+        Users.user2.name() + " = user_group2",
+        "admin1 = admin_group"
     };
     context.makeNewPolicy(testPolicies);
 
     // create dbs
-    Connection adminCon = context.createConnection("admin", "foo");
+    Connection adminCon = context.createConnection(Users.admin1.name(), "foo");
     Statement adminStmt = context.createStatement(adminCon);
     String dbName = "db1";
     adminStmt.execute("use default");
@@ -216,7 +216,7 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
     adminStmt.close();
     adminCon.close();
 
-    Connection userConn = context.createConnection("user2", "foo");
+    Connection userConn = context.createConnection(Users.user2.name(), "foo");
     Statement userStmt = context.createStatement(userConn);
     userStmt.execute("use " + dbName);
 
@@ -402,8 +402,8 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
     editor.addPolicy("load_data = server=server1->uri=file://" + dataFile.toString(), "roles");
     editor.addPolicy("admin = server=server1", "roles");
     editor.addPolicy("admin1 = admin", "users");
-    editor.addPolicy("user1 = group1", "users");
-    editor.addPolicy("user2 = group2", "users");
+    editor.addPolicy(Users.user1.name() + " = group1", "users");
+    editor.addPolicy(Users.user2.name() + " = group2", "users");
 
     dropDb(ADMIN1, DB1);
     createDb(ADMIN1, DB1);
@@ -468,7 +468,7 @@ public class TestSandboxOps  extends AbstractTestWithStaticDFS {
         ", server=server1->uri=file://" + allowedDir.getPath() +
         ", server=server1->uri=" + allowedDfsDir.toString(), "roles");
     editor.addPolicy("admin1 = admin", "users");
-    editor.addPolicy("user1 = group1", "users");
+    editor.addPolicy(Users.user1.name() + " = group1", "users");
     dropDb(ADMIN1, DB1);
     createDb(ADMIN1, DB1);
     createTable(ADMIN1, DB1, dataFile, TBL1);

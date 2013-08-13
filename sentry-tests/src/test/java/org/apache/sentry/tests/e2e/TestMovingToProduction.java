@@ -88,7 +88,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
     String dbName1 = "db_1";
     String dbName2 = "proddb";
     String tableName1 = "tb_1";
-    Connection connection = context.createConnection("admin1", "foo");
+    Connection connection = context.createConnection(Users.admin1.name(), "foo");
     Statement statement = context.createStatement(connection);
     statement.execute("DROP DATABASE IF EXISTS " + dbName1 + " CASCADE");
     statement.execute("DROP DATABASE IF EXISTS " + dbName2 + " CASCADE");
@@ -101,7 +101,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
     connection.close();
 
     // a
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName1);
     statement.execute("DROP TABLE IF EXISTS " + tableName1);
@@ -127,7 +127,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
     statement.execute("DESCRIBE " + tableName1);
 
     // c
-    connection = context.createConnection("user2", "foo");
+    connection = context.createConnection(Users.user2.name(), "foo");
     statement = context.createStatement(connection);
     context.assertAuthzException(statement, "USE " + dbName2);
     context.assertAuthzException(statement, "INSERT OVERWRITE TABLE "
@@ -138,7 +138,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
     connection.close();
 
     // d
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName2);
     context.assertAuthzException(statement, "DROP TABLE " + tableName1);
@@ -168,7 +168,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
     String dbName1 = "db_1";
     String dbName2 = "proddb";
     String tableName1 = "tb_1";
-    Connection connection = context.createConnection("admin1", "foo");
+    Connection connection = context.createConnection(Users.admin1.name(), "foo");
     Statement statement = context.createStatement(connection);
     statement.execute("DROP DATABASE IF EXISTS " + dbName1 + " CASCADE");
     statement.execute("DROP DATABASE IF EXISTS " + dbName2 + " CASCADE");
@@ -181,7 +181,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
     connection.close();
 
     // a
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("DROP TABLE IF EXISTS " + dbName1 + "." + tableName1);
     statement.execute("create table " + dbName1 + "." + tableName1
@@ -203,7 +203,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
         statement.execute("DESCRIBE " + dbName2 + "." + tableName1));
 
     // c
-    connection = context.createConnection("user2", "foo");
+    connection = context.createConnection(Users.user2.name(), "foo");
     statement = context.createStatement(connection);
 
     context.assertAuthzException(statement, "INSERT OVERWRITE TABLE "
@@ -216,7 +216,7 @@ public class TestMovingToProduction extends AbstractTestWithStaticLocalFS {
     connection.close();
 
     // d
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName2);
     context.assertAuthzException(statement, "DROP TABLE " + tableName1);

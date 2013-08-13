@@ -114,7 +114,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
 
     // test show databases
     // show databases shouldn't filter any of the dbs from the resultset
-    Connection conn = context.createConnection("user1", "");
+    Connection conn = context.createConnection(Users.user1.name(), "");
     Statement stmt = context.createStatement(conn);
     ResultSet res = stmt.executeQuery("SHOW DATABASES");
     List<String> result = new ArrayList<String>();
@@ -158,7 +158,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
     conn.close();
 
     // test show databases and show tables for user2
-    conn = context.createConnection("user2", "");
+    conn = context.createConnection(Users.user2.name(), "");
     stmt = context.createStatement(conn);
     res = stmt.executeQuery("SHOW DATABASES");
     result.clear();
@@ -235,7 +235,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
 
     // test show databases
     // show databases shouldn't filter any of the dbs from the resultset
-    Connection conn = context.createConnection("user1", "");
+    Connection conn = context.createConnection(Users.user1.name(), "");
     List<String> result = new ArrayList<String>();
 
     // test direct JDBC metadata API
@@ -304,7 +304,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
     conn.close();
 
     // test show databases and show tables for user2
-    conn = context.createConnection("user2", "");
+    conn = context.createConnection(Users.user2.name(), "");
 
     // test direct JDBC metadata API
     res = conn.getMetaData().getSchemas();
@@ -441,10 +441,10 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
         "db1_tab2_all = server=server1->db=db1->table=table_2",
         "db1_tab1_insert = server=server1->db=db1->table=table_1->action=insert",
         "admin_role = server=server1", "[users]", "user3 = user_group",
-    "admin = admin_group"};
+    "admin1 = admin_group"};
 
     context.makeNewPolicy(testPolicies);
-    Connection adminCon = context.createConnection("admin", "foo");
+    Connection adminCon = context.createConnection(Users.admin1.name(), "foo");
     Statement adminStmt = context.createStatement(adminCon);
     String dbName = "db1";
     adminStmt.execute("use default");
@@ -453,7 +453,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
     adminStmt.execute("create table " + dbName + ".table_1 (id int)");
     adminStmt.close();
     adminCon.close();
-    Connection userConn = context.createConnection("user3", "foo");
+    Connection userConn = context.createConnection(Users.user3.name(), "foo");
     Statement userStmt = context.createStatement(userConn);
     context.assertAuthzException(userStmt, "select * from " + dbName + ".table_1");
     userConn.close();
@@ -481,7 +481,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
     adminStmt.execute("create table " + DB1 + ".table_2 (id int)");
     adminStmt.close();
     adminCon.close();
-    Connection userConn = context.createConnection("user3", "foo");
+    Connection userConn = context.createConnection(Users.user3.name(), "foo");
     Statement userStmt = context.createStatement(userConn);
     context.assertAuthzException(userStmt, "insert overwrite table  " + DB1
         + ".table_2 select * from " + DB1 + ".table_1");
@@ -519,11 +519,11 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
         "db1_all = server=server1->db=db1",
         "db1_tab1_select = server=server1->db=db1->table=table_1->action=select",
         "admin_role = server=server1", "[users]", "user1 = user_group1",
-        "user2 = user_group2", "admin = admin_group"};
+        "user2 = user_group2", "admin1 = admin_group"};
     context.makeNewPolicy(testPolicies);
 
     // create dbs
-    Connection adminCon = context.createConnection("admin", "foo");
+    Connection adminCon = context.createConnection(Users.admin1.name(), "foo");
     Statement adminStmt = context.createStatement(adminCon);
     String dbName = "db1";
     adminStmt.execute("use default");
@@ -549,7 +549,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
     adminStmt.close();
     adminCon.close();
 
-    Connection userConn = context.createConnection("user2", "foo");
+    Connection userConn = context.createConnection(Users.user2.name(), "foo");
     Statement userStmt = context.createStatement(userConn);
 
     context.assertAuthzException(userStmt, "drop database " + dbName);
@@ -696,7 +696,7 @@ public class TestCrossDbOps extends AbstractTestWithStaticLocalFS {
     .execute("CREATE TABLE " + DB2 + "." + TBL2 + "(id int)");
     context.close();
 
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
 
     // d

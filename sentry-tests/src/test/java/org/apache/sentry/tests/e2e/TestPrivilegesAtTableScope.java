@@ -89,7 +89,7 @@ public class TestPrivilegesAtTableScope
     // users: users -> groups
     context.append("[users]");
     context.append("hive = admin");
-    context.append("user_1 = user_group");
+    context.append(Users.user1.name() + " = user_group");
     // setup db objects needed by the test
     Connection connection = context.createConnection("hive", "hive");
     Statement statement = context.createStatement(connection);
@@ -106,7 +106,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // test execution
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name() + "", "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
     // test user can insert
@@ -143,7 +143,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // negative test: connect as user_1 and try to recreate tab_1
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name() + "", "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
     try {
@@ -194,7 +194,7 @@ public class TestPrivilegesAtTableScope
     // users: users -> groups
     context.append("[users]");
     context.append("hive = admin");
-    context.append("user_1 = user_group");
+    context.append(Users.user1.name() + " = user_group");
     // setup db objects needed by the test
     Connection connection = context.createConnection("hive", "hive");
     Statement statement = context.createStatement(connection);
@@ -212,7 +212,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // test execution
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name(), "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
     // test user can execute insert on table
@@ -290,7 +290,7 @@ public class TestPrivilegesAtTableScope
     // users: users -> groups
     context.append("[users]");
     context.append("hive = admin");
-    context.append("user_1 = user_group");
+    context.append(Users.user1.name() + " = user_group");
     // setup db objects needed by the test
     Connection connection = context.createConnection("hive", "hive");
     Statement statement = context.createStatement(connection);
@@ -309,7 +309,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // test execution
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name(), "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
     // test user can execute query on table
@@ -386,7 +386,7 @@ public class TestPrivilegesAtTableScope
     // users: users -> groups
     context.append("[users]");
     context.append("hive = admin");
-    context.append("user_1 = user_group");
+    context.append(Users.user1.name() + " = user_group");
     // setup db objects needed by the test
     Connection connection = context.createConnection("hive", "hive");
     Statement statement = context.createStatement(connection);
@@ -407,7 +407,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // test execution
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name(), "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
     // test user can execute query TAB_1 JOIN TAB_2
@@ -473,7 +473,7 @@ public class TestPrivilegesAtTableScope
     // users: users -> groups
     context.append("[users]");
     context.append("hive = admin");
-    context.append("user_1 = user_group");
+    context.append(Users.user1.name() + " = user_group");
     // setup db objects needed by the test
     Connection connection = context.createConnection("hive", "hive");
     Statement statement = context.createStatement(connection);
@@ -494,7 +494,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // test execution
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name(), "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
     // test user can execute query on TAB_2
@@ -567,7 +567,7 @@ public class TestPrivilegesAtTableScope
     // users: users -> groups
     context.append("[users]");
     context.append("hive = admin");
-    context.append("user_1 = user_group");
+    context.append(Users.user1.name() + " = user_group");
     // setup db objects needed by the test
     Connection connection = context.createConnection("hive", "hive");
     Statement statement = context.createStatement(connection);
@@ -588,7 +588,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // test execution
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name(), "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
     // test user can execute query on TAB_2
@@ -677,7 +677,7 @@ public class TestPrivilegesAtTableScope
     // users: users -> groups
     context.append("[users]");
     context.append("hive = admin");
-    context.append("user_1 = user_group");
+    context.append(Users.user1.name() + " = user_group");
     // setup db objects needed by the test
     Connection connection = context.createConnection("hive", "hive");
     Statement statement = context.createStatement(connection);
@@ -698,7 +698,7 @@ public class TestPrivilegesAtTableScope
     connection.close();
 
     // test execution
-    connection = context.createConnection("user_1", "password");
+    connection = context.createConnection(Users.user1.name(), "password");
     statement = context.createStatement(connection);
     statement.execute("USE DB_1");
 

@@ -125,7 +125,7 @@ public class TestPerDatabasePolicyFile extends AbstractTestWithStaticLocalFS {
 
 
     // test execution
-    connection = context.createConnection("user1", "password");
+    connection = context.createConnection(Users.user1.name(), "password");
     statement = context.createStatement(connection);
     // test user can query table
     context.assertAuthzException(statement, "USE db1");

@@ -44,10 +44,10 @@ public class TestMetadataPermissions extends AbstractTestWithStaticLocalFS {
         "[users]",
         "user1 = user_group1",
         "user2 = user_group2",
-        "admin = admin_group"
+        "admin1 = admin_group"
         };
     context.makeNewPolicy(testPolicies);
-    Connection adminCon = context.createConnection("admin", "foo");
+    Connection adminCon = context.createConnection(Users.admin1.name(), "foo");
     Statement adminStmt = context.createStatement(adminCon);
     for (String dbName : new String[] { "db1", "db2" }) {
       adminStmt.execute("USE default");
@@ -75,7 +75,7 @@ public class TestMetadataPermissions extends AbstractTestWithStaticLocalFS {
   @Test
   public void testDescPrivilegesNegative() throws Exception {
     String dbName = "db2";
-    Connection connection = context.createConnection("user2", "password");
+    Connection connection = context.createConnection(Users.user2.name(), "password");
     Statement statement = context.createStatement(connection);
     context.assertAuthzException(statement, "USE " + dbName);
 //    TODO when DESCRIBE db.table is supported tests should be uncommented
@@ -94,7 +94,7 @@ public class TestMetadataPermissions extends AbstractTestWithStaticLocalFS {
   @Test
   public void testDescDbPrivilegesNegative() throws Exception {
     String dbName = "db2";
-    Connection connection = context.createConnection("user2", "password");
+    Connection connection = context.createConnection(Users.user2.name(), "password");
     Statement statement = context.createStatement(connection);
     context.assertAuthzException(statement, "DESCRIBE DATABASE " + dbName);
     context.assertAuthzException(statement, "DESCRIBE DATABASE EXTENDED " + dbName);
@@ -108,7 +108,7 @@ public class TestMetadataPermissions extends AbstractTestWithStaticLocalFS {
    */
   @Test
   public void testDescDbPrivilegesPositive() throws Exception {
-    Connection connection = context.createConnection("user1", "password");
+    Connection connection = context.createConnection(Users.user1.name(), "password");
     Statement statement = context.createStatement(connection);
     for (String dbName : new String[] { "db1", "db2" }) {
       statement.execute("USE " + dbName);
@@ -124,7 +124,7 @@ public class TestMetadataPermissions extends AbstractTestWithStaticLocalFS {
    */
   @Test
   public void testDescPrivilegesPositive() throws Exception {
-    Connection connection = context.createConnection("user1", "password");
+    Connection connection = context.createConnection(Users.user1.name(), "password");
     Statement statement = context.createStatement(connection);
     for (String dbName : new String[] { "db1", "db2" }) {
       statement.execute("USE " + dbName);

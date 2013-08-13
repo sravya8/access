@@ -78,7 +78,7 @@ public class TestPrivilegeAtTransform extends AbstractTestWithStaticLocalFS {
     String dbName1 = "db_1";
     String tableName1 = "tb_1";
     String query = "select TRANSFORM(a.under_col, a.value) USING 'cat' AS (tunder_col, tvalue) FROM " + dbName1 + "." + tableName1 + " a";
-    Connection connection = context.createConnection("admin1", "foo");
+    Connection connection = context.createConnection(Users.admin1.name(), "foo");
     Statement statement = context.createStatement(connection);
     statement.execute("DROP DATABASE IF EXISTS " + dbName1 + " CASCADE");
     statement.execute("CREATE DATABASE " + dbName1);
@@ -92,7 +92,7 @@ public class TestPrivilegeAtTransform extends AbstractTestWithStaticLocalFS {
     statement.close();
     connection.close();
 
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
 
     // 3

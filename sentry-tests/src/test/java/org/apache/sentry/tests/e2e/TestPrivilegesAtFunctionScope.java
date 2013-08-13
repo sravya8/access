@@ -75,12 +75,12 @@ public class TestPrivilegesAtFunctionScope extends AbstractTestWithStaticLocalFS
     editor.addPolicy("db1_all = server=server1->db=" + dbName1, "roles");
     editor.addPolicy("db1_tab1 = server=server1->db=" + dbName1 + "->table=" + tableName1, "roles");
     editor.addPolicy("UDF_JAR = server=server1->uri=file://${user.home}/.m2", "roles");
-    editor.addPolicy("admin1 = admin", "users");
+    editor.addPolicy(Users.admin1.name() + " = admin", "users");
     editor.addPolicy("user1 = group1", "users");
-    editor.addPolicy("user2 = group2", "users");
-    editor.addPolicy("user3 = group3", "users");
+    editor.addPolicy(Users.user2.name() + " = group2", "users");
+    editor.addPolicy(Users.user3.name() + " = group3", "users");
 
-    Connection connection = context.createConnection("admin1", "foo");
+    Connection connection = context.createConnection(Users.admin1.name(), "foo");
     Statement statement = context.createStatement(connection);
     statement.execute("DROP DATABASE IF EXISTS " + dbName1 + " CASCADE");
     statement.execute("CREATE DATABASE " + dbName1);
@@ -95,7 +95,7 @@ public class TestPrivilegesAtFunctionScope extends AbstractTestWithStaticLocalFS
     context.close();
 
     // user1 should be able create/drop temp functions
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName1);
     statement.execute(
@@ -104,7 +104,7 @@ public class TestPrivilegesAtFunctionScope extends AbstractTestWithStaticLocalFS
     context.close();
 
     // user2 has select privilege on one of the tables in db2, should be able create/drop temp functions
-    connection = context.createConnection("user2", "foo");
+    connection = context.createConnection(Users.user2.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName1);
     statement.execute(
@@ -113,7 +113,7 @@ public class TestPrivilegesAtFunctionScope extends AbstractTestWithStaticLocalFS
     context.close();
 
     // user3 shouldn't be able to create/drop temp functions since it doesn't have permission for jar
-    connection = context.createConnection("user3", "foo");
+    connection = context.createConnection(Users.user3.name(), "foo");
     statement = context.createStatement(connection);
     try {
       statement.execute("USE " + dbName1);
@@ -126,7 +126,7 @@ public class TestPrivilegesAtFunctionScope extends AbstractTestWithStaticLocalFS
     context.close();
 
     // user4 (not part of any group ) shouldn't be able to create/drop temp functions
-    connection = context.createConnection("user4", "foo");
+    connection = context.createConnection(Users.user4.name(), "foo");
     statement = context.createStatement(connection);
     try {
       statement.execute("USE default");
@@ -155,10 +155,10 @@ public class TestPrivilegesAtFunctionScope extends AbstractTestWithStaticLocalFS
     editor.addPolicy("db1_all = server=server1->db=" + dbName1, "roles");
     editor.addPolicy("db1_tab1 = server=server1->db=" + dbName1 + "->table=" + tableName1, "roles");
     editor.addPolicy("UDF_JAR = server=server1->uri=file://${user.home}/.m2", "roles");
-    editor.addPolicy("admin1 = admin", "users");
+    editor.addPolicy(Users.admin1.name() + " = admin", "users");
     editor.addPolicy("user1 = group1", "users");
 
-    Connection connection = context.createConnection("admin1", "password");
+    Connection connection = context.createConnection(Users.admin1.name(), "password");
     Statement statement = connection.createStatement();
     statement.execute("DROP DATABASE IF EXISTS " + dbName1 + " CASCADE");
     statement.execute("CREATE DATABASE " + dbName1);

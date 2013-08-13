@@ -75,7 +75,7 @@ public class TestEndToEnd extends AbstractTestWithStaticLocalFS {
     String tableName1 = "tb_1";
     String tableName2 = "tb_2";
     String viewName1 = "view_1";
-    Connection connection = context.createConnection("admin1", "foo");
+    Connection connection = context.createConnection(Users.admin1.name(), "foo");
     Statement statement = context.createStatement(connection);
     // 1
     statement.execute("DROP DATABASE IF EXISTS " + dbName1 + " CASCADE");
@@ -104,7 +104,7 @@ public class TestEndToEnd extends AbstractTestWithStaticLocalFS {
     editor.addPolicy("data_uri = server=server1->uri=file://" + dataDir.getPath(), "roles");
 
     // 5
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName1);
     statement.execute("DROP TABLE IF EXISTS " + dbName1 + "." + tableName1);
@@ -118,7 +118,7 @@ public class TestEndToEnd extends AbstractTestWithStaticLocalFS {
     connection.close();
 
     // 7
-    connection = context.createConnection("admin1", "foo");
+    connection = context.createConnection(Users.admin1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName2);
     statement.execute("DROP TABLE IF EXISTS " + dbName1 + "." + tableName1);
@@ -128,7 +128,7 @@ public class TestEndToEnd extends AbstractTestWithStaticLocalFS {
     connection.close();
 
     // 9
-    connection = context.createConnection("user1", "foo");
+    connection = context.createConnection(Users.user1.name(), "foo");
     statement = context.createStatement(connection);
     statement.execute("USE " + dbName2);
     statement.execute("INSERT OVERWRITE TABLE " +

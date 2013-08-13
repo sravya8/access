@@ -157,7 +157,7 @@ public class TestServerConfiguration extends AbstractTestWithHiveServer {
     editor.addPolicy("admin1 = admin", "users");
     editor.addPolicy("user1 = group1", "users");
 
-    Connection connection = context.createConnection("user1", "password");
+    Connection connection = context.createConnection(Users.user1.name(), "password");
     Statement statement = context.createStatement(connection);
 
     // disallow external executables. The external.exec is set to false by session hooks

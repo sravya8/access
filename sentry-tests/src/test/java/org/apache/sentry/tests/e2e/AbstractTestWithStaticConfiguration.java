@@ -40,7 +40,7 @@ public abstract class AbstractTestWithStaticConfiguration {
   private static final Logger LOGGER = LoggerFactory
       .getLogger(AbstractTestWithStaticConfiguration.class);
   protected static final String SINGLE_TYPE_DATA_FILE_NAME = "kv1.dat";
-  protected static final String ADMIN1 = "admin1";
+  protected static final String ADMIN1 = Users.admin1.name();
   protected static final String ALL_DB1 = "server=server1->db=db_1",      
       ALL_DB2 = "server=server1->db=db_2",
       SELECT_DB1_TBL1 = "server=server1->db=db_1->table=tb_1->action=select",
@@ -51,8 +51,8 @@ public abstract class AbstractTestWithStaticConfiguration {
       SELECT_DB2_TBL2 = "server=server1->db=db_2->table=tb_2->action=select",
       INSERT_DB2_TBL1 = "server=server1->db=db_2->table=tb_1->action=insert",
       SELECT_DB1_VIEW1 = "server=server1->db=db_1->table=view_1->action=select",
-      USER1 = "user1",
-      USER2 = "user2",
+      USER1 = Users.user1.name(),
+      USER2 = Users.user2.name(),
       GROUP1 = "group1",
       GROUP1_ROLE = "group1_role",
       DB1 = "db_1",
