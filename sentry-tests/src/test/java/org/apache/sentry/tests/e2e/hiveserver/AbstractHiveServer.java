@@ -52,6 +52,13 @@ public abstract class AbstractHiveServer implements HiveServer {
     return "jdbc:hive2://" + hostname + ":" + port + "/default";
   }
 
+  @Override
+  public Connection createConnection(String username, String password) throws Exception{
+    String url = getURL();
+    Connection connection =  DriverManager.getConnection(url, username, password);
+    return connection;
+  }
+
   protected static String getHostname(HiveConf hiveConf) {
     return hiveConf.get(ConfVars.HIVE_SERVER2_THRIFT_BIND_HOST.toString(), "localhost").trim();
   }

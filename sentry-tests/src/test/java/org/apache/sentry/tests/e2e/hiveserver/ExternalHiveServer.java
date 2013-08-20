@@ -21,7 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.slf4j.Logger;
@@ -36,89 +39,76 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 
-public class ExternalHiveServer extends AbstractHiveServer {
+public class ExternalHiveServer implements HiveServer{
   private static final Logger LOGGER = LoggerFactory
       .getLogger(ExternalHiveServer.class);
   private final File confDir;
   private final File logDir;
   private Process process;
 
+  public static final String auth = System.getProperty("auth", "kerberos");
+  public static final String hs2Host = System.getProperty("hs2Host", "hive-secure-2.ent.cloudera.com");
+  public static final String hivePrinc = System.getProperty("hivePrinc", "hive/_HOST@ENT.CLOUDERA.COM");
+
   public ExternalHiveServer(HiveConf hiveConf, File confDir, File logDir) throws Exception {
-    super(hiveConf, getHostname(hiveConf), getPort(hiveConf));
     this.confDir = confDir;
     this.logDir = logDir;
+
+    classSetup();
   }
 
+  public static void classSetup(){
+    String driverName = "org.apache.hive.jdbc.HiveDriver";
+
+    try {
+      Class.forName(driverName);
+    } catch (ClassNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
 
   @Override
   public synchronized void start() throws Exception {
-    String hiveCommand = System.getProperty("hive.bin.path", "./target/hive/bin/hive");
-    String hadoopHome = System.getProperty("hadoop.home", "./target/hadoop");
-    String hadoopClasspath = getHadoopClasspath();
-    String command = "export ";
-    command += String.format("HIVE_CONF_DIR=\"%s\" HADOOP_HOME=\"%s\" ", confDir.getPath(), hadoopHome);
-    command += String.format("HADOOP_CLASSPATH=\"%s:%s\" ", confDir.getPath(), hadoopClasspath);
-    command += "HADOOP_CLIENT_OPTS=\"-Dhive.log.dir=./target/\"";
-    command += "; ";
-    command += String.format("%s --service hiveserver2 >%s/hs2.out 2>&1 & echo $! > %s/hs2.pid",
-        hiveCommand, logDir.getPath(), logDir.getPath());
-    LOGGER.info("Executing " + command);
-    process = Runtime.getRuntime().
-        exec(new String[]{"/bin/sh", "-c", command});
-    waitForStartup(this);
   }
 
   @Override
   public synchronized void shutdown() throws Exception {
-    if(process != null) {
-      process.destroy();
-      process = null;
-      String pid = Strings.nullToEmpty(Files.readFirstLine(new File(logDir, "hs2.pid"), Charsets.UTF_8)).trim();
-      if(!pid.isEmpty()) {
-        LOGGER.info("Killing " + pid);
-        Process killCommand = Runtime.getRuntime().
-            exec(new String[]{"/bin/sh", "-c", "kill " + pid});
-        // TODO this isn't strictly correct but kill won't output much data
-        String error = read(killCommand.getErrorStream());
-        String output = read(killCommand.getInputStream());
-        LOGGER.info("Kill exit code " + killCommand.waitFor() +
-            ", output = '" + output + "', error = '" + error + "'");
-      }
-    }
   }
 
-  private String read(InputStream is) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-    StringBuffer buffer = new StringBuffer();
-    try {
-      String line;
-      while((line = reader.readLine()) != null) {
-        buffer.append(line);
-      }
-      return buffer.toString();
-    } finally {
-      reader.close();
-    }
-
+  @Override
+  public String getURL() {
+    return "jdbc:hive2://" + hs2Host + ":10000/default;";
   }
 
-  private String getHadoopClasspath() {
-    List<String> result = Lists.newArrayList();
-    String clazzPath = Preconditions.checkNotNull(System.getProperty("java.class.path"), "java.class.path");
-    String sep = Preconditions.checkNotNull(System.getProperty("path.separator"), "path.separator");
-    for(String item : Splitter.on(sep).omitEmptyStrings().trimResults().split(clazzPath)) {
-      if(item.endsWith("/sentry-tests/target/classes") ||
-          item.endsWith("/sentry-tests/target/test-classes")) {
-        result.add(item);
-      } else {
-        File clazzPathItem = new File(item);
-        String fileName = clazzPathItem.getName();
-        if(clazzPathItem.isFile() && fileName.startsWith("sentry-") && fileName.endsWith(".jar")) {
-          result.add(item);
-        }
-      }
-    }
-    return Joiner.on(sep).join(result);
+  @Override
+  public String getProperty(String key) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
+  @Override
+  public Connection createConnection(String user, String password) throws Exception{
+    String commandFormat = "kinit -kt /cdep/keytabs/%s.keytab %s@ENT.CLOUDERA.COM";
+    String command = String.format(commandFormat, user, user);
+    Process proc = Runtime.getRuntime().exec(command);
+    String url = getURL();
+    Properties oProps = new Properties();
+
+    if(auth.equals("kerberos")){
+      url += "principal=" + hivePrinc;
+      oProps.setProperty("IMPERSONATE", user);
+    }else{
+      oProps.setProperty("user",user);
+      oProps.setProperty("password",password);
+    }
+    return DriverManager.getConnection(url, oProps);
+  }
+
+  public void kdestroy() throws Exception{
+
+    String command = "kdestroy";
+    Process proc = Runtime.getRuntime().exec(command);
+
+  }
 }

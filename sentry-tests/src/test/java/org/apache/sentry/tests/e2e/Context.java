@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
@@ -85,8 +84,7 @@ public class Context {
   }
 
   public Connection createConnection(String username, String password) throws Exception {
-    String url = hiveServer.getURL();
-    Connection connection =  DriverManager.getConnection(url, username, password);
+    Connection connection =  hiveServer.createConnection(username, password);
     connections.add(connection);
     assertNotNull("Connection is null", connection);
     assertFalse("Connection should not be closed", connection.isClosed());
