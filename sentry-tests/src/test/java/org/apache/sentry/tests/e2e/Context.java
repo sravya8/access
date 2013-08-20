@@ -73,6 +73,17 @@ public class Context {
     statements = Sets.newHashSet();
   }
 
+  public Context() throws Exception {
+    connections = Sets.newHashSet();
+    statements = Sets.newHashSet();
+    this.hiveServer = null;
+    this.fileSystem = null;
+    this.baseDir = null;
+    this.dataDir = null;
+    this.policyFile = new File("blah");
+
+  }
+
   public Connection createConnection(String username, String password) throws Exception {
     String url = hiveServer.getURL();
     Connection connection =  DriverManager.getConnection(url, username, password);

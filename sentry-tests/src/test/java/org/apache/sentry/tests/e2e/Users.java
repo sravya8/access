@@ -9,6 +9,8 @@ public enum Users{
     user3,
     user4,
     user5,
-    user6
+    user6,
+
+    hive
 
 }

@@ -37,7 +37,7 @@ public class PolicyFileEditor {
 
   private static final String NL = System.getProperty("line.separator", "\n");
 
-  private File policy;
+  protected File policy;
 
   public PolicyFileEditor (File policy) throws IOException {
     policy.delete();
@@ -50,7 +50,7 @@ public class PolicyFileEditor {
     policy.createNewFile();
   }
 
-  public void addPolicy(String line, String cat) throws IOException {
+  public void addPolicy(String line, String cat) throws Exception {
     List<String> result = new ArrayList<String>();
     boolean exist = false;
     for(String s : Files.readLines(policy, Charsets.UTF_8)) {
